@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Suggestion } from '../../models/suggestion';
+import { Suggestion } from '../../../models/suggestion';
 
 @Component({
-  selector: 'app-list-suggestion',
-  templateUrl: './list-suggestion.component.html',
-  styleUrl: './list-suggestion.component.css'
+  selector: 'app-suggestion-list',
+  templateUrl: './suggestion-list.component.html',
+  styleUrl: './suggestion-list.component.css'
 })
-export class ListSuggestionComponent implements OnInit {
+export class SuggestionListComponent implements OnInit {
   searchTerm: string = '';
   favorites: Suggestion[] = [];
 
@@ -65,6 +65,7 @@ export class ListSuggestionComponent implements OnInit {
       suggestion.title.toLowerCase().includes(searchLower) ||
       suggestion.category.toLowerCase().includes(searchLower)
     );
+
   }
 
   //incrémenter les likes

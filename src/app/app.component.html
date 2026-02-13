@@ -1,12 +1,10 @@
-<!-- NAV -->
-<div style="height: 100px; background-color: darkturquoise;">
-  <app-nav></app-nav>
-</div>
+<!-- HEADER WITH NAVIGATION -->
+<app-header></app-header>
 
-<!-- LISTE DES SUGGESTIONS -->
-<div style="min-height: 500px; background-color: #f5f5f5; padding: 20px 0;">
-  <app-list-suggestion></app-list-suggestion>
-</div>
+<!-- MAIN CONTENT AREA -->
+<main>
+  <router-outlet></router-outlet>
+</main>
 
 <!-- FOOTER -->
 <div style="height: 80px; background-color: dimgray;">

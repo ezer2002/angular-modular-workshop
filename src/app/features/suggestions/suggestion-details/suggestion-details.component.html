@@ -1,0 +1,40 @@
+goBack(): void {
+  this.router.navigate(['/suggestions']);
+}
+
+<div class="detail-container" *ngIf="suggestion">
+  <button class="btn-back" (click)="goBack()">← Retour à la liste</button>
+  
+  <div class="detail-card">
+    <h1>{{ suggestion.title }}</h1>
+    
+    <div class="detail-meta">
+      <span class="category">📁 {{ suggestion.category }}</span>
+      <span class="date">📅 {{ suggestion.date | date: 'dd MMMM yyyy' }}</span>
+    </div>
+    
+    <div class="status-badge">
+      <span [class]="'status status-' + suggestion.status">
+        {{ suggestion.status.toUpperCase().replace('_', ' ') }}
+      </span>
+    </div>
+    
+    <div class="detail-section">
+      <h3>Description</h3>
+      <p>{{ suggestion.description }}</p>
+    </div>
+    
+    <div class="detail-section">
+      <h3>Statistiques</h3>
+      <p>👍 Likes : <strong>{{ suggestion.nbLikes }}</strong></p>
+    </div>
+  </div>
+</div>
+
+<div class="detail-container" *ngIf="!suggestion">
+  <div class="error-message">
+    <h2>❌ Suggestion non trouvée</h2>
+    <p>La suggestion avec l'ID {{ suggestionId }} n'existe pas.</p>
+    <button class="btn-back" (click)="goBack()">← Retour à la liste</button>
+  </div>
+</div>

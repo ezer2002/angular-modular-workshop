@@ -1,7 +1,6 @@
 <div class="container">
   <h2>Liste des suggestions</h2>
 
-  <!-- Barre de recherche avec two-way binding -->
   <div class="search-bar">
     <input 
       type="text" 
@@ -10,44 +9,44 @@
       class="search-input">
   </div>
 
-  <!-- Liste des suggestions avec NgFor -->
+
   <div class="suggestions-list">
     <div *ngFor="let suggestion of filteredSuggestions" class="suggestion-card">
-      <!-- Titre avec interpolation -->
       <h3>{{ suggestion.title }}</h3>
 
-      <!-- Catégorie et date avec interpolation et property binding -->
       <div class="suggestion-meta">
         <span class="category">{{ suggestion.category }}</span>
         <span class="date">{{ suggestion.date | date: 'dd MMM yyyy' }}</span>
       </div>
 
-      <!-- Description -->
+
       <p class="description">{{ suggestion.description }}</p>
 
-      <!-- Statut avec class binding -->
+
       <div class="status-container">
         <span [class]="'status status-' + suggestion.status">
           {{ suggestion.status.toUpperCase().replace('_', ' ') }}
         </span>
       </div>
 
-      <!-- Boutons Like et Favoris - Ne s'affichent pas si status === 'refusee' avec NgIf -->
-      <div *ngIf="suggestion.status !== 'refusee'" class="actions">
-        <!-- Bouton Like avec event binding -->
-        <button (click)="likeSuggestion(suggestion)" class="btn-like">
+    
+      <div class="actions">
+        <button [routerLink]="[suggestion.id]" class="btn-details">
+          👁️ Voir détails
+        </button>
+   
+        <button *ngIf="suggestion.status !== 'refusee'" (click)="likeSuggestion(suggestion)" class="btn-like">
           👍 Like {{ suggestion.nbLikes }}
         </button>
 
-        <!-- Bouton Ajouter aux favoris avec event binding -->
-        <button (click)="addToFavorites(suggestion)" class="btn-favorite">
+        <button *ngIf="suggestion.status !== 'refusee'" (click)="addToFavorites(suggestion)" class="btn-favorite">
           ♥ Ajouter aux favoris
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Message si aucune suggestion trouvée -->
+
   <div *ngIf="filteredSuggestions.length === 0" class="no-results">
     Aucune suggestion trouvée pour "{{ searchTerm }}"
   </div>
