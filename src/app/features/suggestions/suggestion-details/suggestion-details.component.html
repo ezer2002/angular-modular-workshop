@@ -1,7 +1,3 @@
-goBack(): void {
-  this.router.navigate(['/suggestions']);
-}
-
 <div class="detail-container" *ngIf="suggestion">
   <button class="btn-back" (click)="goBack()">← Retour à la liste</button>
   
@@ -15,7 +11,7 @@ goBack(): void {
     
     <div class="status-badge">
       <span [class]="'status status-' + suggestion.status">
-        {{ suggestion.status.toUpperCase().replace('_', ' ') }}
+        {{ getFormattedStatus(suggestion.status) }}
       </span>
     </div>
     

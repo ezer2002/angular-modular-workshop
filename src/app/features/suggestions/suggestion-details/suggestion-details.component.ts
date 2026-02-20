@@ -70,4 +70,8 @@ export class SuggestionDetailsComponent implements OnInit {
   goBack(): void {
     this.router.navigate(['/suggestions']);
   }
+
+  getFormattedStatus(status: string): string {
+    return status.toUpperCase().replace('_', ' ');
+  }
 }
