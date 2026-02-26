@@ -1,1 +1,42 @@
-<p>users works!</p>
+<div class="form-container">
+    <h2>Ajouter un utilisateur</h2>
+    
+    <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+    </div>
+    
+    <form [formGroup]="userForm" (ngSubmit)="adduser()">
+        <div class="form-group">
+            <label for="email">Email <span class="required">*</span></label>
+            <input 
+                type="email" 
+                id="email"
+                formControlName="email" 
+                class="form-control"
+                [class.invalid]="userForm.get('email')?.invalid && userForm.get('email')?.touched"
+                placeholder="exemple@email.com">
+            <div class="error-message" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
+                <small *ngIf="userForm.get('email')?.errors?.['required']">⚠ L'email est requis</small>
+                <small *ngIf="userForm.get('email')?.errors?.['email']">⚠ L'email n'est pas valide</small>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="city">Ville <span class="required">*</span></label>
+            <input 
+                type="text" 
+                id="city"
+                formControlName="city" 
+                class="form-control"
+                [class.invalid]="userForm.get('city')?.invalid && userForm.get('city')?.touched"
+                placeholder="Entrez votre ville">
+            <div class="error-message" *ngIf="userForm.get('city')?.invalid && userForm.get('city')?.touched">
+                <small *ngIf="userForm.get('city')?.errors?.['required']">⚠ La ville est requise</small>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn-submit">
+            Enregistrer
+        </button>
+    </form>
+</div>

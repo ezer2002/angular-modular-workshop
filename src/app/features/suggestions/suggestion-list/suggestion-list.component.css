@@ -11,6 +11,41 @@ h2 {
   font-size: 28px;
 }
 
+/* Header Actions */
+.header-actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header-actions .search-bar {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.btn-add {
+  padding: 12px 24px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-add:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+.btn-add:active {
+  transform: scale(0.98);
+}
+
 /* Barre de recherche */
 .search-bar {
   margin-bottom: 30px;

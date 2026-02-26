@@ -10,7 +10,9 @@ export class SuggestionListComponent implements OnInit {
   searchTerm: string = '';
   favorites: Suggestion[] = [];
 
-  suggestions: Suggestion[] = [
+  suggestions: Suggestion[] = [];
+
+  private defaultSuggestions: Suggestion[] = [
     {
       id: 1,
       title: 'Organiser une journée team building',
@@ -50,8 +52,26 @@ export class SuggestionListComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.loadSuggestions();
     console.log('Liste des suggestions:', this.suggestions);
     console.log('Nombre total de suggestions:', this.suggestions.length);
+  }
+
+  private loadSuggestions(): void {
+    const storedSuggestions = localStorage.getItem('suggestions');
+    if (storedSuggestions) {
+      this.suggestions = JSON.parse(storedSuggestions).map((s: any) => ({
+        ...s,
+        date: new Date(s.date)
+      }));
+    } else {
+      this.suggestions = this.defaultSuggestions;
+      this.saveSuggestionsToStorage();
+    }
+  }
+
+  private saveSuggestionsToStorage(): void {
+    localStorage.setItem('suggestions', JSON.stringify(this.suggestions));
   }
 
   // filtrer les suggestions par titre et catégorie
@@ -71,6 +91,7 @@ export class SuggestionListComponent implements OnInit {
   //incrémenter les likes
   likeSuggestion(suggestion: Suggestion): void {
     suggestion.nbLikes++;
+    this.saveSuggestionsToStorage();
     console.log(`Like ajouté pour "${suggestion.title}". Nombre de likes:`, suggestion.nbLikes);
     console.log('Liste des suggestions mise à jour:', this.suggestions);
   }

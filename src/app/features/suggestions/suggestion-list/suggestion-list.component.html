@@ -1,12 +1,15 @@
 <div class="container">
   <h2>Liste des suggestions</h2>
 
-  <div class="search-bar">
-    <input 
-      type="text" 
-      [(ngModel)]="searchTerm" 
-      placeholder="Rechercher une suggestion"
-      class="search-input">
+  <div class="header-actions">
+    <div class="search-bar">
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        placeholder="Rechercher une suggestion"
+        class="search-input">
+    </div>
+    <button routerLink="add" class="btn-add">➕ Ajouter suggestion</button>
   </div>
 
 
