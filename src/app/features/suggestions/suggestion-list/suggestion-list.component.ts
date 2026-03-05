@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Suggestion } from '../../../models/suggestion';
+import { SuggestionService } from '../../../core/Services/suggestion.service'; 
 
 @Component({
   selector: 'app-suggestion-list',
@@ -12,66 +14,26 @@ export class SuggestionListComponent implements OnInit {
 
   suggestions: Suggestion[] = [];
 
-  private defaultSuggestions: Suggestion[] = [
-    {
-      id: 1,
-      title: 'Organiser une journée team building',
-      description: 'Suggestion pour organiser une journée de team building pour renforcer les liens entre les membres de l\'équipe.',
-      category: 'Événements',
-      date: new Date('2025-01-20'),
-      status: 'acceptee',
-      nbLikes: 10
-    },
-    {
-      id: 2,
-      title: 'Améliorer le système de réservation',
-      description: 'Proposition pour améliorer la gestion des réservations en ligne avec un système de confirmation automatique.',
-      category: 'Technologie',
-      date: new Date('2025-01-15'),
-      status: 'refusee',
-      nbLikes: 0
-    },
-    {
-      id: 3,
-      title: 'Créer un système de récompenses',
-      description: 'Mise en place d\'un programme de récompenses pour motiver les employés et reconnaître leurs efforts.',
-      category: 'Ressources Humaines',
-      date: new Date('2025-01-25'),
-      status: 'refusee',
-      nbLikes: 0
-    },
-    {
-      id: 4,
-      title: 'Moderniser l\'interface utilisateur',
-      description: 'Refonte complète de l\'interface utilisateur pour une meilleure expérience utilisateur.',
-      category: 'Technologie',
-      date: new Date('2025-01-30'),
-      status: 'en_attente',
-      nbLikes: 0
-    }
-  ];
+  constructor(
+    private suggestionService: SuggestionService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.loadSuggestions();
-    console.log('Liste des suggestions:', this.suggestions);
-    console.log('Nombre total de suggestions:', this.suggestions.length);
   }
 
   private loadSuggestions(): void {
-    const storedSuggestions = localStorage.getItem('suggestions');
-    if (storedSuggestions) {
-      this.suggestions = JSON.parse(storedSuggestions).map((s: any) => ({
-        ...s,
-        date: new Date(s.date)
-      }));
-    } else {
-      this.suggestions = this.defaultSuggestions;
-      this.saveSuggestionsToStorage();
-    }
-  }
-
-  private saveSuggestionsToStorage(): void {
-    localStorage.setItem('suggestions', JSON.stringify(this.suggestions));
+    this.suggestionService.getSuggestionsList().subscribe({
+      next: (data) => {
+        this.suggestions = data;
+        console.log('Liste des suggestions:', this.suggestions);
+        console.log('Nombre total de suggestions:', this.suggestions.length);
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des suggestions:', error);
+      }
+    });
   }
 
   // filtrer les suggestions par titre et catégorie
@@ -90,10 +52,30 @@ export class SuggestionListComponent implements OnInit {
 
   //incrémenter les likes
   likeSuggestion(suggestion: Suggestion): void {
-    suggestion.nbLikes++;
-    this.saveSuggestionsToStorage();
-    console.log(`Like ajouté pour "${suggestion.title}". Nombre de likes:`, suggestion.nbLikes);
-    console.log('Liste des suggestions mise à jour:', this.suggestions);
+    this.suggestionService.updateLikes(suggestion.id).subscribe({
+      next: () => {
+        suggestion.nbLikes++;
+        console.log(`Like ajouté pour "${suggestion.title}". Nombre de likes:`, suggestion.nbLikes);
+      },
+      error: (error) => {
+        console.error('Erreur lors de la mise à jour des likes:', error);
+      }
+    });
+  }
+
+  // Supprimer une suggestion
+  deleteSuggestion(id: number): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette suggestion?')) {
+      this.suggestionService.deleteSuggestion(id).subscribe({
+        next: () => {
+          console.log('Suggestion supprimée avec succès');
+          this.loadSuggestions(); // Recharger la liste
+        },
+        error: (error) => {
+          console.error('Erreur lors de la suppression:', error);
+        }
+      });
+    }
   }
 
   //ajouter une suggestion aux favoris

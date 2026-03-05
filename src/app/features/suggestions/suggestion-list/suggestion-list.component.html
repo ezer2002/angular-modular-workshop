@@ -45,6 +45,10 @@
         <button *ngIf="suggestion.status !== 'refusee'" (click)="addToFavorites(suggestion)" class="btn-favorite">
           ♥ Ajouter aux favoris
         </button>
+
+        <button (click)="deleteSuggestion(suggestion.id)" class="btn-delete">
+          🗑️ Supprimer
+        </button>
       </div>
     </div>
   </div>

@@ -1,5 +1,5 @@
 <div class="container">
-  <h2>Ajouter une nouvelle suggestion</h2>
+  <h2>{{ isEditMode ? 'Modifier une suggestion' : 'Ajouter une nouvelle suggestion' }}</h2>
 
   <form [formGroup]="suggestionForm" (ngSubmit)="onSubmit()" class="suggestion-form">
     

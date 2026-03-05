@@ -1,5 +1,8 @@
 <div class="detail-container" *ngIf="suggestion">
-  <button class="btn-back" (click)="goBack()">← Retour à la liste</button>
+  <div class="button-group">
+    <button class="btn-back" (click)="goBack()">← Retour à la liste</button>
+    <button class="btn-update" (click)="updateSuggestion()">✏️ Update</button>
+  </div>
   
   <div class="detail-card">
     <h1>{{ suggestion.title }}</h1>

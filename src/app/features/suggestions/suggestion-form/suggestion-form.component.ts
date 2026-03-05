@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SuggestionService } from '../../../core/Services/suggestion.service';
+import { Suggestion } from '../../../models/suggestion';
 
 @Component({
   selector: 'app-suggestion-form',
@@ -9,6 +11,9 @@ import { Router } from '@angular/router';
 })
 export class SuggestionFormComponent implements OnInit {
   suggestionForm!: FormGroup;
+  id: number | null = null;
+  suggestion: Suggestion | null = null;
+  isEditMode: boolean = false;
   
   categories: string[] = [
     'Infrastructure et bâtiments',
@@ -25,10 +30,23 @@ export class SuggestionFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private actR: ActivatedRoute,
+    private service: SuggestionService
   ) {}
 
   ngOnInit(): void {
+    this.initForm();
+    
+    // Vérifier si on est en mode édition
+    this.id = +this.actR.snapshot.params['id'];
+    if (this.id) {
+      this.isEditMode = true;
+      this.loadSuggestion();
+    }
+  }
+
+  initForm(): void {
     this.suggestionForm = this.fb.group({
       title: ['', [
         Validators.required,
@@ -45,52 +63,65 @@ export class SuggestionFormComponent implements OnInit {
     });
   }
 
+  loadSuggestion(): void {
+    this.service.getSuggestionById(this.id!).subscribe({
+      next: (response: any) => {
+        const data = response.suggestion || response;
+        this.suggestion = data;
+        this.suggestionForm.patchValue({
+          title: data.title,
+          description: data.description,
+          category: data.category,
+          date: new Date(data.date).toISOString().split('T')[0],
+          status: data.status
+        });
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement de la suggestion:', error);
+      }
+    });
+  }
+
   onSubmit(): void {
     if (this.suggestionForm.valid) {
-      // Récupérer les données du formulaire
       const formValue = this.suggestionForm.getRawValue();
       
-      // Créer une nouvelle suggestion
-      const newSuggestion = {
-        id: this.generateId(),
+      const suggestionData: any = {
         title: formValue.title,
         description: formValue.description,
         category: formValue.category,
         date: new Date(formValue.date),
-        status: 'en_attente',
-        nbLikes: 0
+        status: formValue.status.replace(' ', '_'),
+        nbLikes: this.suggestion?.nbLikes || 0
       };
 
-      // Ajouter la suggestion à la liste (via localStorage ou service)
-      this.addSuggestionToList(newSuggestion);
-
-      // Rediriger vers la liste
-      this.router.navigate(['/suggestions']);
+      if (this.isEditMode && this.id) {
+        // Mode mise à jour
+        this.service.updateSuggestion(this.id, suggestionData).subscribe({
+          next: () => {
+            console.log('Suggestion mise à jour avec succès');
+            this.router.navigate(['/suggestions']);
+          },
+          error: (error) => {
+            console.error('Erreur lors de la mise à jour:', error);
+          }
+        });
+      } else {
+        // Mode ajout
+        this.service.addSuggestion(suggestionData).subscribe({
+          next: () => {
+            console.log('Suggestion ajoutée avec succès');
+            this.router.navigate(['/suggestions']);
+          },
+          error: (error) => {
+            console.error('Erreur lors de l\'ajout:', error);
+          }
+        });
+      }
     }
   }
 
-  private generateId(): number {
-    // Récupérer les suggestions du localStorage
-    const suggestions = this.getSuggestionsFromStorage();
-    if (suggestions.length === 0) {
-      return 1;
-    }
-    // Retourner le max id + 1
-    return Math.max(...suggestions.map(s => s.id)) + 1;
-  }
-
-  private addSuggestionToList(suggestion: any): void {
-    const suggestions = this.getSuggestionsFromStorage();
-    suggestions.push(suggestion);
-    localStorage.setItem('suggestions', JSON.stringify(suggestions));
-  }
-
-  private getSuggestionsFromStorage(): any[] {
-    const storedSuggestions = localStorage.getItem('suggestions');
-    return storedSuggestions ? JSON.parse(storedSuggestions) : [];
-  }
-
-  // Méthodes pour accéder facilement aux contrôles du formulaire
+  
   get title() { return this.suggestionForm.get('title'); }
   get description() { return this.suggestionForm.get('description'); }
   get category() { return this.suggestionForm.get('category'); }
